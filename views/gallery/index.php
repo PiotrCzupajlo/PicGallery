@@ -1,4 +1,4 @@
-
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -9,6 +9,7 @@
     <h1>Picture Gallery</h1>
     <form action="../index.php" method="POST" enctype="multipart/form-data">
         <input type="file" name="image" required>
+        <input type="text" name="watermark" placeholder="Enter watermark text" required>
         <button type="submit">Upload</button>
     </form>
     <div>
