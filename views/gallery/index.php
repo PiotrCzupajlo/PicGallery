@@ -16,7 +16,7 @@
     </form>
 
     <div class="gallery">
-        <?php foreach ($images as $image): ?>
+        <?php foreach ($results as $image): ?>
             <div class="gallery-item">
                 <img src="../uploads/<?= htmlspecialchars($image['fileName']) ?>" alt="Image" class="image" data-fullimg="../uploads/<?= htmlspecialchars($image['fullimg']) ?>">
                 <h3><?= htmlspecialchars($image['title']) ?></h3>
@@ -25,7 +25,15 @@
             </div>
         <?php endforeach; ?>
     </div>
+    <form method="POST" action="../index.php" style="display: inline;">
+        <input type="hidden" name="action" value="previous">
+        <button type="submit">Previous Page</button>
+    </form>
 
+    <form method="POST" action="../index.php" style="display: inline;">
+        <input type="hidden" name="action" value="next">
+        <button type="submit">Next Page</button>
+    </form>
     <script>
         // Add event listener to each image
         document.querySelectorAll('.image').forEach(function(image) {

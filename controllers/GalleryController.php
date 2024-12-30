@@ -8,7 +8,36 @@ class GalleryController {
 
     public function index() {
         $images = $this->getImagesFromDatabase();
+
+        // Convert the MongoDB cursor to an array
+        $imagesArray = iterator_to_array($images);
+        
+        if (!isset($_SESSION['page'])) {
+            $_SESSION['page'] = 0; 
+        }
+        
+        $results = []; // Ensure $results is initialized
+        $i = count($imagesArray); // Get the count of images
+        
+        for ($j = 4 * $_SESSION['page']; $j < $i && $j< 4*($_SESSION['page']+1); $j++) {
+            if (isset($imagesArray[$j])) {
+                array_push($results, $imagesArray[$j]);
+            }
+        }
         require_once __DIR__ . '/../views/gallery/index.php';
+    }
+    public function changePage($action) {
+        // Ensure the session variable is initialized
+        if (!isset($_SESSION['page'])) {
+            $_SESSION['page'] = 0;
+        }
+
+        // Update the page variable based on the action
+        if ($action === 'next') {
+            $_SESSION['page']++;
+        } elseif ($action === 'previous' && $_SESSION['page'] > 0) {
+            $_SESSION['page']--;
+        }
     }
 
     public function upload() {
