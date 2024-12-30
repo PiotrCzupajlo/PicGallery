@@ -1,7 +1,12 @@
 <?php
+require_once __DIR__ . '/../models/Image.php';
+require_once __DIR__ . '/../vendor/autoload.php';
+
+use MongoDB\Client;
+
 class GalleryController {
+
     public function index() {
-        require_once __DIR__ . '/../models/Image.php';
         $images = Image::getAll();
         require_once __DIR__ . '/../views/gallery/index.php';
     }
@@ -13,6 +18,8 @@ class GalleryController {
             $targetFile = $uploadDir . $fileName;
 
             $watermarkText = isset($_POST['watermark']) ? $_POST['watermark'] : 'Watermark';
+            $title = isset($_POST['title']) ? $_POST['title'] : 'Untitled';
+            $author = isset($_POST['author']) ? $_POST['author'] : 'Unknown';
 
             if (move_uploaded_file($_FILES['image']['tmp_name'], $targetFile)) {
                 // Add watermark to the image
@@ -20,6 +27,11 @@ class GalleryController {
 
                 // Create a miniature of the image
                 $miniatureFile = $this->createMiniature($targetFile);
+
+                // Save image metadata to MongoDB
+
+
+                $this->saveToDatabase($fileName, $title, $author);
 
                 require_once __DIR__ . '/../models/Image.php';
                 $miniatureFileName = basename($miniatureFile);
@@ -120,5 +132,25 @@ class GalleryController {
 
         // Return the path of the miniature image
         return $miniatureFilePath;
+    }
+
+    private function saveToDatabase($fileName, $title, $author) {
+        $mongo = new MongoDB\Client(
+            "mongodb://localhost:27017/wai"
+            ,
+            [
+            'username' => 'wai_web'
+            ,
+            'password' => 'w@i_w3b',
+            ]);
+            $db = $mongo->wai;
+       $collection=[
+       'fileName' => $fileName,
+       'title' => $title,
+       'author' => $author,
+       'uploadedAt' => new MongoDB\BSON\UTCDateTime()
+       ];
+       $result = $db->collection->insertOne($collection);
+       echo 'inserted with id' . $result->getInsertedId();
     }
 }

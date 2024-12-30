@@ -6,12 +6,15 @@
     <title>Gallery</title>
 </head>
 <body>
-    <h1>Picture Gallery</h1>
+<h1>Picture Gallery</h1>
     <form action="../index.php" method="POST" enctype="multipart/form-data">
         <input type="file" name="image" required>
         <input type="text" name="watermark" placeholder="Enter watermark text" required>
+        <input type="text" name="title" placeholder="Enter image title" required>
+        <input type="text" name="author" placeholder="Enter author name" required>
         <button type="submit">Upload</button>
     </form>
+    <div>
     <div>
         <h2>Uploaded Images</h2>
         <div style="display: flex; flex-wrap: wrap; gap: 10px;">
