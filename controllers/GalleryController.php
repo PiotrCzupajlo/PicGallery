@@ -7,7 +7,7 @@ use MongoDB\Client;
 class GalleryController {
 
     public function index() {
-        $images = Image::getAll();
+        $images = $this->getImagesFromDatabase();
         require_once __DIR__ . '/../views/gallery/index.php';
     }
 
@@ -25,13 +25,11 @@ class GalleryController {
                 // Add watermark to the image
                 $this->addWatermark($targetFile, $watermarkText);
 
-                // Create a miniature of the image
+
                 $miniatureFile = $this->createMiniature($targetFile);
-
-                // Save image metadata to MongoDB
-
-
-                $this->saveToDatabase($fileName, $title, $author);
+                $miniatureName = substr($fileName,0,strlen($fileName)-4);
+                $end = substr($fileName,strlen($fileName)-4);
+                $this->saveToDatabase($miniatureName . '_miniature' . $end, $title, $author,$fileName);
 
                 require_once __DIR__ . '/../models/Image.php';
                 $miniatureFileName = basename($miniatureFile);
@@ -134,7 +132,7 @@ class GalleryController {
         return $miniatureFilePath;
     }
 
-    private function saveToDatabase($fileName, $title, $author) {
+    private function saveToDatabase($fileName, $title, $author,$fileName2) {
         $mongo = new MongoDB\Client(
             "mongodb://localhost:27017/wai"
             ,
@@ -148,9 +146,25 @@ class GalleryController {
        'fileName' => $fileName,
        'title' => $title,
        'author' => $author,
+       'fullimg'=>$fileName2,
        'uploadedAt' => new MongoDB\BSON\UTCDateTime()
        ];
        $result = $db->collection->insertOne($collection);
-       echo 'inserted with id' . $result->getInsertedId();
     }
+    private function getImagesFromDatabase() {
+        $mongo = new MongoDB\Client(
+            "mongodb://localhost:27017/wai"
+            ,
+            [
+            'username' => 'wai_web'
+            ,
+            'password' => 'w@i_w3b',
+            ]);
+            $db = $mongo->wai;
+            $results = $db->collection->find();
+
+        return $results;
+    }
+
+
 }

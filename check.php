@@ -10,13 +10,9 @@ $mongo = new MongoDB\Client(
     'password' => 'w@i_w3b',
     ]);
     $db = $mongo->wai;
-    $results = $db->collection->find();
+    $db->collection->deleteMany([]);
 
-    foreach($results as $result)
-    {
-        echo $result['author'];
-    }
+
 
 ?>
 
-677191116e9552020c737e32
