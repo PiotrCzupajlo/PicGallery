@@ -136,8 +136,8 @@ class GalleryController {
                 return;
         }
 
-        $thumbnailWidth = 150;
-        $thumbnailHeight = 150;
+        $thumbnailWidth = 200;
+        $thumbnailHeight = 125;
         $originalWidth = imagesx($image);
         $originalHeight = imagesy($image);
 

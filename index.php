@@ -1,31 +1,45 @@
 <?php
-// File structure:
-// - index.php
-// - controllers/
-//    - GalleryController.php
-// - models/
-//    - Image.php
-// - views/
-//    - gallery/
-//       - index.php
-//       - upload.php
-// - uploads/
-
-// index.php
-// index.php
 require_once __DIR__ . '/controllers/GalleryController.php';
+require_once __DIR__ . '/controllers/AuthController.php';
 
-$controller = new GalleryController();
+$galleryController = new GalleryController();
+$authController = new AuthController();
+
+session_start();
 
 // Handle requests
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Check if the action is for page navigation
+if (isset($_GET['action'])) {
+    switch ($_GET['action']) {
+        case 'register':
+            $authController->register();
+            break;
+        case 'login':
+            $authController->login();
+            break;
+        case 'logout':
+            $authController->logout();
+            break;
+        case 'gallery': // New case for the gallery page
+            $galleryController->index();
+            break;
+        default:
+            $galleryController->index();
+            break;
+    }
+} elseif ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['action']) && in_array($_POST['action'], ['next', 'previous'])) {
-        $controller->changePage($_POST['action']); // Change the page based on the action
-        $controller->index(); // Reload the index view
+        $galleryController->changePage($_POST['action']);
+        $galleryController->index();
     } else {
-        $controller->upload(); // Handle file upload
+        $galleryController->upload();
     }
 } else {
-    $controller->index(); // Display the gallery
+    // Check if the user is logged in
+    if (isset($_SESSION['user'])) {
+        // Redirect to gallery page if the user is logged in
+        $galleryController->index();
+    } else {
+        // Redirect to login page by default
+        $authController->login();
+    }
 }
