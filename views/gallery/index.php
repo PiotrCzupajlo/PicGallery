@@ -15,16 +15,27 @@
         <button type="submit">Upload</button>
     </form>
 
-    <div class="gallery">
-        <?php foreach ($results as $image): ?>
-            <div class="gallery-item">
-                <img src="../uploads/<?= htmlspecialchars($image['fileName']) ?>" alt="Image" class="image" data-fullimg="../uploads/<?= htmlspecialchars($image['fullimg']) ?>">
-                <h3><?= htmlspecialchars($image['title']) ?></h3>
-                <p>By: <?= htmlspecialchars($image['author']) ?></p>
-                <p>Full Image: <?= htmlspecialchars($image['fullimg']) ?></p>
-            </div>
-        <?php endforeach; ?>
-    </div>
+    <form method="POST" action="../index.php">
+        <div class="gallery">
+            <?php foreach ($results as $image): ?>
+                <div class="gallery-item">
+                    <img src="../uploads/<?= htmlspecialchars($image['fileName']) ?>" alt="Image" class="image" data-fullimg="../uploads/<?= htmlspecialchars($image['fullimg']) ?>">
+                    <h3><?= htmlspecialchars($image['title']) ?></h3>
+                    <p>By: <?= htmlspecialchars($image['author']) ?></p>
+                    <p>Full Image: <?= htmlspecialchars($image['fullimg']) ?></p>
+                    <label>
+                        <input type="checkbox" name="selected_images[]" value="<?= htmlspecialchars($image['_id']) ?>"
+                        <?php if (isset($_SESSION['selected_images']) && in_array($image['_id'], $_SESSION['selected_images'])): ?>
+                            checked
+                        <?php endif; ?>>
+                        Remember this image
+                    </label>
+                </div>
+            <?php endforeach; ?>
+        </div>
+        <button type="submit" name="action" value="remember">Remember</button>
+    </form>
+
     <form method="POST" action="../index.php" style="display: inline;">
         <input type="hidden" name="action" value="previous">
         <button type="submit">Previous Page</button>
@@ -33,6 +44,10 @@
     <form method="POST" action="../index.php" style="display: inline;">
         <input type="hidden" name="action" value="next">
         <button type="submit">Next Page</button>
+    </form>
+    <form method="POST" action="../index.php" style="display: inline;">
+        <input type="hidden" name="action" value="logout">
+        <button type="submit">logout</button>
     </form>
     <script>
         // Add event listener to each image

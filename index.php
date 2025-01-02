@@ -7,8 +7,28 @@ $authController = new AuthController();
 
 session_start();
 
-// Handle requests
-if (isset($_GET['action'])) {
+if (isset($_POST['action'])) {
+    switch ($_POST['action']) {
+        case 'next':
+            $galleryController->changePage($_POST['action']);
+            $galleryController->index();
+            break;
+        case 'previous':
+            $galleryController->changePage($_POST['action']);
+            $galleryController->index();
+            break;
+        case 'remember':
+            $galleryController->rememberSelection();
+            $galleryController->index();
+            break;
+        case 'logout':
+                $authController->logout();
+            break;
+        default:
+            $galleryController->upload();
+            break;
+    }
+} elseif (isset($_GET['action'])) {
     switch ($_GET['action']) {
         case 'register':
             $authController->register();
@@ -16,30 +36,18 @@ if (isset($_GET['action'])) {
         case 'login':
             $authController->login();
             break;
-        case 'logout':
-            $authController->logout();
-            break;
-        case 'gallery': // New case for the gallery page
+
+        case 'gallery':
             $galleryController->index();
             break;
         default:
             $galleryController->index();
             break;
     }
-} elseif ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (isset($_POST['action']) && in_array($_POST['action'], ['next', 'previous'])) {
-        $galleryController->changePage($_POST['action']);
-        $galleryController->index();
-    } else {
-        $galleryController->upload();
-    }
 } else {
-    // Check if the user is logged in
     if (isset($_SESSION['user'])) {
-        // Redirect to gallery page if the user is logged in
         $galleryController->index();
     } else {
-        // Redirect to login page by default
         $authController->login();
     }
 }
