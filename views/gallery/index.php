@@ -12,6 +12,7 @@
         <input type="text" name="watermark" placeholder="Enter watermark text" required>
         <input type="text" name="title" placeholder="Enter image title" required>
         <input type="text" name="author" placeholder="Enter author name" required>
+        <input type="hidden" name="action" value="upload">
         <button type="submit">Upload</button>
     </form>
 
@@ -49,6 +50,11 @@
         <input type="hidden" name="action" value="logout">
         <button type="submit">logout</button>
     </form>
+    <form method="POST" action="../index.php" style="display: inline;">
+    <input type="hidden" name="action" value="remembered">
+    <button type="submit">Show Only Remembered</button>
+</form>
+
     <script>
         // Add event listener to each image
         document.querySelectorAll('.image').forEach(function(image) {

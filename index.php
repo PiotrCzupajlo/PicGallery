@@ -24,6 +24,9 @@ if (isset($_POST['action'])) {
         case 'logout':
                 $authController->logout();
             break;
+        case 'upload':
+            $galleryController->upload();
+            break;
         default:
             $galleryController->upload();
             break;

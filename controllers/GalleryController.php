@@ -8,26 +8,33 @@ class GalleryController {
 
     public function index() {
         $images = $this->getImagesFromDatabase();
-        $imagesArray = iterator_to_array($images);
 
+        // Convert the MongoDB cursor to an array
+        $imagesArray = iterator_to_array($images);
+        
         if (!isset($_SESSION['page'])) {
             $_SESSION['page'] = 0; 
         }
-
-        $results = [];
-        $i = count($imagesArray);
-
-        for ($j = 4 * $_SESSION['page']; $j < $i && $j < 4 * ($_SESSION['page'] + 1); $j++) {
+        
+        $results = []; // Ensure $results is initialized
+        $i = count($imagesArray); // Get the count of images
+        
+        for ($j = 4 * $_SESSION['page']; $j < $i && $j< 4*($_SESSION['page']+1); $j++) {
             if (isset($imagesArray[$j])) {
                 array_push($results, $imagesArray[$j]);
             }
         }
-
-        // Pass the selected images from the session to the view
-        $selectedImages = isset($_SESSION['selected_images']) ? $_SESSION['selected_images'] : [];
-
         require_once __DIR__ . '/../views/gallery/index.php';
     }
+    public function rememberSelection() {
+        if (isset($_POST['selected_images'])) {
+            $_SESSION['selected_images'] = $_POST['selected_images'];
+        } else {
+            $_SESSION['selected_images'] = [];
+        }
+    }
+
+
     public function changePage($action) {
         // Ensure the session variable is initialized
         if (!isset($_SESSION['page'])) {
@@ -86,13 +93,7 @@ class GalleryController {
             echo "No file uploaded.";
         }
     }
-    public function rememberSelection() {
-        if (isset($_POST['selected_images'])) {
-            $_SESSION['selected_images'] = $_POST['selected_images'];
-        } else {
-            $_SESSION['selected_images'] = [];
-        }
-    }
+
     private function addWatermark($filePath, $watermarkText) {
         $fileType = mime_content_type($filePath);
         $pathInfo = pathinfo($filePath);
