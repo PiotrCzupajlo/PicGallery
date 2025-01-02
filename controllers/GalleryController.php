@@ -41,7 +41,7 @@ class GalleryController {
     }
 
     public function upload() {
-        if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
+        if (isset($_FILES['image'])) {
             $uploadDir = __DIR__ . '/../uploads/';
             $fileName = basename($_FILES['image']['name']);
             $targetFile = $uploadDir . $fileName;
@@ -50,10 +50,22 @@ class GalleryController {
             $title = isset($_POST['title']) ? $_POST['title'] : 'Untitled';
             $author = isset($_POST['author']) ? $_POST['author'] : 'Unknown';
 
+            $maxFileSize = 1 * 1024 * 1024; 
+            $allowedExtensions = ['png', 'jpg', 'jpeg'];
+            $allowedMimeTypes = ['image/png', 'image/jpeg'];
+            $fileSize = $_FILES['image']['size'];
+            $fileExtension = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
+            if ($fileSize > $maxFileSize) {
+                echo "The file is too large. Maximum size allowed is 1MB.";
+                exit();
+            }
+            if (!in_array($fileExtension, $allowedExtensions)) {
+                echo "Invalid file type. Only PNG and JPG files are allowed.";
+                exit();
+            }
             if (move_uploaded_file($_FILES['image']['tmp_name'], $targetFile)) {
-                // Add watermark to the image
-                $this->addWatermark($targetFile, $watermarkText);
 
+                $this->addWatermark($targetFile, $watermarkText);
 
                 $miniatureFile = $this->createMiniature($targetFile);
                 $miniatureName = substr($fileName,0,strlen($fileName)-4);
